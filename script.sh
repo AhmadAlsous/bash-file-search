@@ -14,16 +14,34 @@ print_help() {
 	echo "  -h, --help       Display help message"
 }
 
+validate_path(){
+    if [ ! -d "$1" ]; then
+	echo "Error: Invalid directory path: $1"
+	echo "Please enter a valid directory path (e.g., /home)."
+	exit 2
+    fi
+}
+
+validate_extension(){
+    if ! [[ "$1" =~ ^\.[A-Za-z0-9]+$  ]]; then
+	echo "Error: Invalid file extension: $1"
+	echo "Please enter a valid file extension (e.g., .txt)."
+	exit 3
+    fi
+}
+
 path=""
 extension=""
 
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-p | --path)
+			validate_path "$2"
 			path=$2
 			shift; shift
 			;;
 		-e | --extension)
+			validate_extension "$2"
 			extension=$2
 			shift; shift
 			;;
@@ -42,20 +60,12 @@ done
 if test -z "$path"; then
 	read -p "What directory do you want to search? " path
 fi
-if [ ! -d "$path" ]; then
-	echo "Error: Invalid directory path: $path"
-	echo "Please enter a valid directory path (e.g., /home)."
-	exit 2
-fi
+validate_path "$path"
 
 if test -z "$extension"; then
 	read -p "What extension do you want to search for? " extension
 fi
-if ! [[ "$extension" =~ ^\.[A-Za-z0-9]+$  ]]; then
-	echo "Error: Invalid file extension: $extension"
-	echo "Please enter a valid file extension (e.g., .txt)."
-	exit 3
-fi
+validate_extension "$extension"
 
 extension=${extension,,} # convert extension to lowercase
 output=$(find "$path" -name "*$extension" -type f -printf "%u %s bytes %M %TY-%Tm-%Td %TH:%TM:%.2TS %p\n" | sort -k1,1 -k2n)
@@ -66,4 +76,4 @@ if test -z "$output"; then
 fi
 
 echo "$output" >file_analysis.txt
-echo "The report has been saved in file_analysis.txt"
+echo "The report has been saved to file_analysis.txt"
