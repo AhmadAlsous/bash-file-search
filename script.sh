@@ -15,19 +15,19 @@ print_help() {
 }
 
 validate_path(){
-    path=$1
-    while [ ! -d "$path" ]; do
-	echo "Error: Invalid directory path: $path"
-        read -p "Please enter a valid directory path (e.g., /home) " path
-    done
+	path=$1
+	while [ ! -d "$path" ]; do
+		echo "Error: Invalid directory path: $path"
+		read -p "Please enter a valid directory path (e.g., /home) " path
+	done
 }
 
 validate_extension(){
-    extension=$1
-    while ! [[ "$extension" =~ ^\.[A-Za-z0-9]+$ ]]; do
-	echo "Error: Invalid file extension: $1"
-	read -p "Please enter a valid file extension (e.g., .txt) " extension
-    done
+	extension=$1
+	while ! [[ "$extension" =~ ^\.[A-Za-z0-9]+$ ]]; do
+		echo "Error: Invalid file extension: $1"
+		read -p "Please enter a valid file extension (e.g., .txt) " extension
+	done
 }
 
 path=""
@@ -35,22 +35,16 @@ extension=""
 
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-p | --path)
+		-p | --path | -e | --extension)
 			if [ -z "$2" ] || [ "${2:0:1}" = "-" ]; then
-			    echo "Missing argument for option $1"
-		    	    shift
-			else
-			    validate_path "$2"
-			    shift; shift
-			fi
-			;;
-		-e | --extension)
-			if [ -z "$2" ] || [ "${2:0:1}" = "-" ]; then
-			    echo "Missing argument for option $1"
-		    	    shift
-			else
-			    validate_extension "$2"
-			    shift; shift
+				echo "Missing argument for option $1"
+		    	shift
+			elif [ "$1" = "-p" ] || [ "$1" = "--path" ]; then
+				validate_path "$2"
+				shift; shift
+			elif [ "$1" = "-e" ] || [ "$1" = "--extension" ]; then
+				validate_extension "$2"
+				shift; shift
 			fi
 			;;
 		-h | --help)
