@@ -36,12 +36,22 @@ extension=""
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-p | --path)
-			validate_path "$2"
-			shift; shift
+			if [ -z "$2" ] || [ "${2:0:1}" = "-" ]; then
+			    echo "Missing argument for option $1"
+		    	    shift
+			else
+			    validate_path "$2"
+			    shift; shift
+			fi
 			;;
 		-e | --extension)
-			validate_extension "$2"
-			shift; shift
+			if [ -z "$2" ] || [ "${2:0:1}" = "-" ]; then
+			    echo "Missing argument for option $1"
+		    	    shift
+			else
+			    validate_extension "$2"
+			    shift; shift
+			fi
 			;;
 		-h | --help)
 			print_help
@@ -66,6 +76,7 @@ if test -z "$extension"; then
 fi
 
 extension=${extension,,} # convert extension to lowercase
+echo "Searching for all files with extension $extension in directory $path"
 output=$(find "$path" -name "*$extension" -type f -printf "%u %s bytes %M %TY-%Tm-%Td %TH:%TM:%.2TS %p\n" | sort -k1,1 -k2n)
 
 if test -z "$output"; then
