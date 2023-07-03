@@ -30,9 +30,6 @@ validate_extension(){
 	done
 }
 
-path=""
-extension=""
-
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-p | --path | -e | --extension)
@@ -53,7 +50,7 @@ while [ $# -gt 0 ]; do
 			;;
 		*)
 			echo "Error: Invalid option: $1"
-			print_help
+			echo "Usage: $0 [-p|--path <directory>] [-e|--extension <extension>] [-h|--help]"
 			exit 1
 			;;
 	esac
@@ -71,7 +68,7 @@ fi
 
 extension=${extension,,} # convert extension to lowercase
 echo "Searching for all files with extension $extension in directory $path"
-output=$(find "$path" -name "*$extension" -type f -printf "%u %s bytes %M %TY-%Tm-%Td %TH:%TM:%.2TS %p\n")
+output=$(find "$path" -name "*$extension" -type f -printf "%u %s bytes %M %TY-%Tm-%Td %TH:%TM:%.2TS %p\n" | sort -k1,1 -k2,2n)
 
 if test -z "$output"; then
 	echo "No files were found in directory $path with extension $extension."
@@ -84,12 +81,13 @@ while IFS=" " read -r owner size _; do
 done <<< "$output"
 
 sorted_output=$(for owner in "${!owner_size[@]}"; do
-    echo "$owner ${owner_size[$owner]}"
-done | sort -k2,2nr)
+    				echo "$owner ${owner_size[$owner]}"
+				done | sort -k2,2nr)
 
-output=$(while read -r owner total_size; do
-    grep "^$owner " <<< "$output" | sort -k3,3nr
-done <<< "$sorted_output")
+output=$(while read -r owner _; do
+    		grep "^$owner" <<< "$output"
+			echo 
+		done <<< "$sorted_output")
 
 echo "$output" > file_analysis.txt
 echo "The report has been saved to file_analysis.txt"
