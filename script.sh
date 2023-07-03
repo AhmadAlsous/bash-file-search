@@ -71,12 +71,25 @@ fi
 
 extension=${extension,,} # convert extension to lowercase
 echo "Searching for all files with extension $extension in directory $path"
-output=$(find "$path" -name "*$extension" -type f -printf "%u %s bytes %M %TY-%Tm-%Td %TH:%TM:%.2TS %p\n" | sort -k1,1 -k2n)
+output=$(find "$path" -name "*$extension" -type f -printf "%u %s bytes %M %TY-%Tm-%Td %TH:%TM:%.2TS %p\n")
 
 if test -z "$output"; then
 	echo "No files were found in directory $path with extension $extension."
 	exit 0
 fi
 
-echo "$output" >file_analysis.txt
+declare -A owner_size=()
+while IFS=" " read -r owner size _; do
+    owner_size[$owner]=$((owner_size[$owner] + size))
+done <<< "$output"
+
+sorted_output=$(for owner in "${!owner_size[@]}"; do
+    echo "$owner ${owner_size[$owner]}"
+done | sort -k2,2nr)
+
+output=$(while read -r owner total_size; do
+    grep "^$owner " <<< "$output" | sort -k3,3nr
+done <<< "$sorted_output")
+
+echo "$output" > file_analysis.txt
 echo "The report has been saved to file_analysis.txt"
