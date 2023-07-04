@@ -56,12 +56,12 @@ while [ $# -gt 0 ]; do
 	esac
 done
 
-if test -z "$path"; then
+if [ -z "$path" ]; then
 	read -p "What directory do you want to search? " path
 	validate_path "$path"
 fi
 
-if test -z "$extension"; then
+if [ -z "$extension" ]; then
 	read -p "What extension do you want to search for? " extension
 	validate_extension "$extension"
 fi
@@ -70,7 +70,7 @@ extension=${extension,,} # convert extension to lowercase
 echo "Searching for all files with extension $extension in directory $path"
 output=$(find "$path" -name "*$extension" -type f -printf "%u %s bytes %M %AF %Ar %p\n" | sort -k2,2n)
 
-if test -z "$output"; then
+if [ -z "$output" ]; then
 	echo "No files were found in directory $path with extension $extension."
 	exit 0
 fi

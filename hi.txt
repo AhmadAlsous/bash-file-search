@@ -1,0 +1,142 @@
+sort_output() {
+    while read -r owner size; do
+        grep "^$owner " <<< "$output" | sort -k3,3nr | while read -r line; do
+            echo "$line"
+        done
+    done <<< "$1"
+}declare -A owner_size=()
+while IFS=" " read -r owner size _; do
+    owner_size[$owner]=$((owner_size[$owner] + size))
+done <<< "$output"
+
+# Sort the owner_size array based on the total size
+sorted_output=$(for owner in "${!owner_size[@]}"; do
+    echo "$owner ${owner_size[$owner]}"
+done | sort -k2,2nr)
+
+output=$(while read -r owner total_size; do
+    grep "^$owner " <<< "$output" | sort -k3,3nr
+done <<< "$sorted_output")
+
+echo "$output" > file_analysis.txt
+echo "The report has been saved to file_analysis.txt"declare -A owner_size=()
+while IFS=" " read -r owner size _; do
+    owner_size[$owner]=$((owner_size[$owner] + size))
+done <<< "$output"
+
+# Sort the owner_size array based on the total size
+sorted_output=$(for owner in "${!owner_size[@]}"; do
+    echo "$owner ${owner_size[$owner]}"
+done | sort -k2,2nr)
+
+output=$(while read -r owner total_size; do
+    grep "^$owner " <<< "$output" | sort -k3,3nr
+done <<< "$sorted_output")
+
+echo "$output" > file_analysis.txt
+echo "The report has been saved to file_analysis.txt"declare -A owner_size=()
+while IFS=" " read -r owner size _; do
+    owner_size[$owner]=$((owner_size[$owner] + size))
+done <<< "$output"
+
+# Sort the owner_size array based on the total size
+sorted_output=$(for owner in "${!owner_size[@]}"; do
+    echo "$owner ${owner_size[$owner]}"
+done | sort -k2,2nr)
+
+output=$(while read -r owner total_size; do
+    grep "^$owner " <<< "$output" | sort -k3,3nr
+done <<< "$sorted_output")
+
+echo "$output" > file_analysis.txt
+echo "The report has been saved to file_analysis.txt"declare -A owner_size=()
+while IFS=" " read -r owner size _; do
+    owner_size[$owner]=$((owner_size[$owner] + size))
+done <<< "$output"
+
+# Sort the owner_size array based on the total size
+sorted_output=$(for owner in "${!owner_size[@]}"; do
+    echo "$owner ${owner_size[$owner]}"
+done | sort -k2,2nr)
+
+output=$(while read -r owner total_size; do
+    grep "^$owner " <<< "$output" | sort -k3,3nr
+done <<< "$sorted_output")
+
+echo "$output" > file_analysis.txt
+echo "The report has been saved to file_analysis.txt"declare -A owner_size=()
+while IFS=" " read -r owner size _; do
+    owner_size[$owner]=$((owner_size[$owner] + size))
+done <<< "$output"
+
+# Sort the owner_size array based on the total size
+sorted_output=$(for owner in "${!owner_size[@]}"; do
+    echo "$owner ${owner_size[$owner]}"
+done | sort -k2,2nr)
+
+output=$(while read -r owner total_size; do
+    grep "^$owner " <<< "$output" | sort -k3,3nr
+done <<< "$sorted_output")
+
+echo "$output" > file_analysis.txt
+echo "The report has been saved to file_analysis.txt"declare -A owner_size=()
+while IFS=" " read -r owner size _; do
+    owner_size[$owner]=$((owner_size[$owner] + size))
+done <<< "$output"
+
+# Sort the owner_size array based on the total size
+sorted_output=$(for owner in "${!owner_size[@]}"; do
+    echo "$owner ${owner_size[$owner]}"
+done | sort -k2,2nr)
+
+output=$(while read -r owner total_size; do
+    grep "^$owner " <<< "$output" | sort -k3,3nr
+done <<< "$sorted_output")
+
+echo "$output" > file_analysis.txt
+echo "The report has been saved to file_analysis.txt"declare -A owner_size=()
+while IFS=" " read -r owner size _; do
+    owner_size[$owner]=$((owner_size[$owner] + size))
+done <<< "$output"
+
+# Sort the owner_size array based on the total size
+sorted_output=$(for owner in "${!owner_size[@]}"; do
+    echo "$owner ${owner_size[$owner]}"
+done | sort -k2,2nr)
+
+output=$(while read -r owner total_size; do
+    grep "^$owner " <<< "$output" | sort -k3,3nr
+done <<< "$sorted_output")
+
+echo "$output" > file_analysis.txt
+echo "The report has been saved to file_analysis.txt"declare -A owner_size=()
+while IFS=" " read -r owner size _; do
+    owner_size[$owner]=$((owner_size[$owner] + size))
+done <<< "$output"
+
+# Sort the owner_size array based on the total size
+sorted_output=$(for owner in "${!owner_size[@]}"; do
+    echo "$owner ${owner_size[$owner]}"
+done | sort -k2,2nr)
+
+output=$(while read -r owner total_size; do
+    grep "^$owner " <<< "$output" | sort -k3,3nr
+done <<< "$sorted_output")
+
+echo "$output" > file_analysis.txt
+echo "The report has been saved to file_analysis.txt"declare -A owner_size=()
+while IFS=" " read -r owner size _; do
+    owner_size[$owner]=$((owner_size[$owner] + size))
+done <<< "$output"
+
+# Sort the owner_size array based on the total size
+sorted_output=$(for owner in "${!owner_size[@]}"; do
+    echo "$owner ${owner_size[$owner]}"
+done | sort -k2,2nr)
+
+output=$(while read -r owner total_size; do
+    grep "^$owner " <<< "$output" | sort -k3,3nr
+done <<< "$sorted_output")
+
+echo "$output" > file_analysis.txt
+echo "The report has been saved to file_analysis.txt"

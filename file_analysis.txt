@@ -1,0 +1,5 @@
+root 0 bytes -rw-r--r-- 2023-07-04 12:20:44 AM /home/ahmadalsous/Shell Scripting Assignment/mn.txt
+root 4811 bytes -rw-r--r-- 2023-07-04 02:55:43 AM /home/ahmadalsous/Shell Scripting Assignment/hi.txt
+
+ahmadalsous 47 bytes -rw-r--r-- 2023-07-02 01:20:24 PM /home/ahmadalsous/test1/txt1.txt
+ahmadalsous 461 bytes -rw-r--r-- 2023-07-04 07:28:22 PM /home/ahmadalsous/Shell Scripting Assignment/file_analysis.txt
