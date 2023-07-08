@@ -38,10 +38,10 @@ while [ $# -gt 0 ]; do
 		    	shift
 			elif [ "$1" = "-p" ] || [ "$1" = "--path" ]; then
 				validate_path "$2"
-				shift; shift
+				shift 2
 			elif [ "$1" = "-e" ] || [ "$1" = "--extension" ]; then
 				validate_extension "$2"
-				shift; shift
+				shift 2
 			fi
 			;;
 		-h | --help)
@@ -84,7 +84,7 @@ sorted_output=$(for owner in "${!owner_size[@]}"; do
     				echo "$owner ${owner_size[$owner]}"
 				done | sort -k2,2nr)
 
-output=$(while read -r owner _; do
+output=$(while read owner _; do
     		grep "^$owner" <<< "$output"
 			echo
 		done <<< "$sorted_output")
