@@ -1,7 +1,5 @@
-ahmadalsous 47 bytes -rw-r--r-- 2023-07-02 01:20:24 PM /home/ahmadalsous/test1/txt1.txt
-ahmadalsous 365 bytes -rwxr--r-- 2023-07-02 03:43:21 PM /home/ahmadalsous/shell-scripts/hello-world.sh
-ahmadalsous 624 bytes -rw-r--r-- 2023-07-08 09:20:39 PM /home/ahmadalsous/Shell Scripting Assignment/file_analysis.txt
-ahmadalsous 4213 bytes -rwxr--r-- 2023-07-08 09:19:59 PM /home/ahmadalsous/Shell Scripting Assignment/script.sh
-
 root 0 bytes -rw-r--r-- 2023-07-04 12:20:44 AM /home/ahmadalsous/Shell Scripting Assignment/mn.txt
 root 4811 bytes -rw-r--r-- 2023-07-04 02:55:43 AM /home/ahmadalsous/Shell Scripting Assignment/hi.txt
+
+ahmadalsous 433 bytes -rw-r--r-- 2023-07-08 10:16:05 PM /home/ahmadalsous/Shell Scripting Assignment/file_analysis.txt
+ahmadalsous 4189 bytes -rwxr--r-- 2023-07-08 10:14:52 PM /home/ahmadalsous/Shell Scripting Assignment/script.sh

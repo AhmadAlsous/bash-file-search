@@ -32,15 +32,11 @@ validate_extension(){
 }
 
 validate_filter_option(){
-	if [ -z "$1" ]; then
-        echo "Missing argument for option $2"
-        return 1
-    fi
-    if ! [[ "$1" =~ $3 ]]; then
-        echo "Error: Invalid file $4: $1"
+    if ! [[ "$1" =~ $2 ]]; then
+        echo "Error: Invalid file $3: $1"
         return 2
     fi
-    local -n filter=$5
+    local -n filter=$4
 	filter="$1"
     return 0
 }
@@ -52,9 +48,9 @@ permission="000"
 
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-d | --directory | -e | --extension)
+		-d | --directory | -e | --extension | -p | --permission)
 			if [ -z "$2" ] || [[ "$2" == -* ]]; then
-				echo "Missing argument for option $1"
+				echo "Error: Missing argument for option $1"
 		    	shift
 			elif [ "$1" = "-d" ] || [ "$1" = "--directory" ]; then
 				validate_directory "$2"
@@ -69,35 +65,25 @@ while [ $# -gt 0 ]; do
 					fi
 					shift
 				done
+			elif [ "$1" = "-p" ] || [ "$1" = "--path" ]; then
+				validate_filter_option $2 "^([0-7]{3}|(([ugoa]=[rwx],)*[uoga]=[rwx]))$" "permission" "permission"
+				shift 2
 			fi
 			;;
-		-s | --size)
-			validate_filter_option $2 $1 "^[+-]?[0-9]+[bcwkMG]$" "size" "size"
-			if ! [ $? -eq 1 ]; then
-				shift
-			fi
-			shift
-			;;
-		-tm | --timeminute)
-			validate_filter_option $2 $1 "^[+-]?[0-9]+$" "last modified time" "time_minute"
-			if ! [ $? -eq 1 ]; then
-				shift
-			fi
-			shift
-			;;
-		-td | --timeday)
-			validate_filter_option $2 $1 "^[+-]?[0-9]+$" "last modified time" "time_day"
-            if ! [ $? -eq 1 ]; then
+		-s | --size | -tm | --timeminute | -td | --timeday)
+			if [ -z "$2" ]; then
+				echo "Error: Missing argument for option $1"
                 shift
-            fi
-            shift
-			;;
-		-p | --permission)
-			validate_filter_option $2 $1 "^([0-7]{3}|(([ugoa]=[rwx],)*[uoga]=[rwx]))$" "permission" "permission"
-			if ! [ $? -eq 1 ]; then
-                shift
-            fi
-            shift
+			elif [ "$1" = "-s" ] || [ "$1" = "--size" ]; then
+				validate_filter_option $2 "^[+-]?[0-9]+[bcwkMG]$" "size" "size"
+				shift 2
+			elif [ "$1" = "-tm" ] || [ "$1" = "--timeminute" ]; then
+				validate_filter_option $2 "^[+-]?[0-9]+$" "last modified time" "time_minute"
+				shift 2
+			elif [ "$1" = "-td" ] || [ "$1" = "--timeday" ]; then
+				validate_filter_option $2 "^[+-]?[0-9]+$" "last modified time" "time_day"
+            	shift 2
+			fi
 			;;
 		-h | --help)
 			print_help
