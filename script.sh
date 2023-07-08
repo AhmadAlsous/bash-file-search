@@ -2,15 +2,15 @@
 
 print_help() {
 	echo "Usage:"
-	echo "  $0 [-p|--path <directory>] [-e|--extension <extension>] [-h|--help]"
+	echo "  $0 [-p|--path <directory>] [-e|--extension <extensions>] [-h|--help]"
 	echo "Description:"
-	echo "  Search for all files with the specified extension in the given directory and its subdirectories."
+	echo "  Search for all files with the specified extensions in the given directory and its subdirectories."
 	echo "  File information includes: owner, size, permissions, last modified timestamp, and full path."
 	echo "  Files are grouped by owner and sorted by size."
 	echo "  The report is saved into file_analysis.txt."
 	echo "Options:"
 	echo "  -p, --path       Specify the directory path to search"
-	echo "  -e, --extension  Specify the file extension to search for"
+	echo "  -e, --extension  Specify the file extensions to search for"
 	echo "  -h, --help       Display help message"
 }
 
@@ -24,24 +24,32 @@ validate_path(){
 
 validate_extension(){
 	extension=$1
-	while ! [[ "$extension" =~ ^\.[A-Za-z0-9]+$ ]]; do
+	if ! [[ "$extension" =~ ^\.[A-Za-z0-9]+$ ]]; then
 		echo "Error: Invalid file extension: $1"
-		read -p "Please enter a valid file extension (e.g., .txt) " extension
-	done
+		return 1
+	fi
+	return 0
 }
 
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-p | --path | -e | --extension)
-			if [ -z "$2" ] || [ "${2:0:1}" = "-" ]; then
+			if [ -z "$2" ] || [[ "$2" == -* ]]; then
 				echo "Missing argument for option $1"
 		    	shift
 			elif [ "$1" = "-p" ] || [ "$1" = "--path" ]; then
 				validate_path "$2"
 				shift 2
 			elif [ "$1" = "-e" ] || [ "$1" = "--extension" ]; then
-				validate_extension "$2"
-				shift 2
+				shift
+				extensions=()
+				while [[ "$1" != -* ]] && [ $# -gt 0 ]; do
+					validate_extension $1
+					if [ $? -eq 0 ]; then
+						extensions+=("$1")
+					fi
+					shift
+				done
 			fi
 			;;
 		-h | --help)
@@ -61,14 +69,27 @@ if [ -z "$path" ]; then
 	validate_path "$path"
 fi
 
-if [ -z "$extension" ]; then
-	read -p "What extension do you want to search for? " extension
-	validate_extension "$extension"
-fi
+while [ -z "$extensions" ]; do
+	read -p "What extensions do you want to search for? " exts
+	IFS=' ' read -ra user_extensions <<< "$exts"
+	for extension in "${user_extensions[@]}"; do
+		validate_extension "$extension"
+		if [ $? -eq 0 ]; then
+			extensions+=("$extension")
+		fi
+	done
+done
 
-extension=${extension,,} # convert extension to lowercase
-echo "Searching for all files with extension $extension in directory $path"
-output=$(find "$path" -name "*$extension" -type f -printf "%u %s bytes %M %AF %Ar %p\n" | sort -k2,2n)
+regex_pattern=""
+for ext in "${extensions[@]}"; do
+  if [ -n "$regex_pattern" ]; then
+    regex_pattern+="\|"
+  fi
+  regex_pattern+="$ext"
+done
+
+echo "Searching for all files with extension ${extensions[@]} in directory $path"
+output=$(find "$path" -regex ".*\($regex_pattern\)$" -type f -printf "%u %s bytes %M %AF %Ar %p\n" | sort -k2,2n)
 
 if [ -z "$output" ]; then
 	echo "No files were found in directory $path with extension $extension."
