@@ -42,7 +42,7 @@ validate_extension(){
 }
 
 validate_filter_option(){
-    if ! [[ "$1" =~ $2 ]]; then
+    if ! [[ "$1" =~ $2 ]]; then #check for invalid option argument
         echo "Error: Invalid file $3: $1"
         return 2
     fi
@@ -51,6 +51,7 @@ validate_filter_option(){
     return 0
 }
 
+# default filters
 size="-1000G"
 time_minute="+0"
 time_day="-999999"
@@ -70,7 +71,7 @@ while [ $# -gt 0 ]; do
 				extensions=()
 				while [[ "$1" != -* ]] && [ $# -gt 0 ]; do
 					validate_extension $1
-					if [ $? -eq 0 ]; then
+					if [ $? -eq 0 ]; then # if extension is valid
 						extensions+=("$1")
 					fi
 					shift
@@ -101,18 +102,18 @@ while [ $# -gt 0 ]; do
 			;;
 		*)
 			echo "Error: Invalid option: $1"
-			echo "Usage: $0 [-p|--path <directory>] [-e|--extension <extension>] [-h|--help]"
+			echo "Usage: $0 [-d|--directory <directory>] [-e|--extension <extensions>] [-p|--permission <permission>] [-s|--size <size>] [-tm|--timeminute <minutes>] [-td|--timeday <days>] [-h|--help]"
 			exit 1
 			;;
 	esac
 done
 
-if [ -z "$directory" ]; then
+if [ -z "$directory" ]; then # providing a valid directory is mandotary
 	read -p "What directory do you want to search? " directory
 	validate_directory "$directory"
 fi
 
-while [ -z "$extensions" ]; do
+while [ -z "$extensions" ]; do # providing at least one valid extension is mandotary
 	read -p "What extensions do you want to search for? " exts
 	IFS=' ' read -ra user_extensions <<< "$exts"
 	for extension in "${user_extensions[@]}"; do
@@ -144,7 +145,7 @@ total_size=0
 biggest_file=""
 smallest_file=""
 
-declare -A owner_size=()
+declare -A owner_size=() # associative array that maps each owner to total size
 while read owner size _ _ _ _ _ name; do
     owner_size[$owner]=$((owner_size[$owner] + size))
 	file_count=$((file_count + 1))
@@ -155,7 +156,7 @@ while read owner size _ _ _ _ _ name; do
 	biggest_file="$name with a size of $size bytes."
 done <<< "$output"
 
-sorted_output=$(for owner in "${!owner_size[@]}"; do
+sorted_output=$(for owner in "${!owner_size[@]}"; do # sort the groups
     				echo "$owner ${owner_size[$owner]}"
 				done | sort -k2,2nr)
 
