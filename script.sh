@@ -1,17 +1,27 @@
 #!/bin/bash
-
 print_help() {
 	echo "Usage:"
-	echo "  $0 [-p|--path <directory>] [-e|--extension <extensions>] [-h|--help]"
+	echo "  $0 [-d|--directory <directory>] [-e|--extension <extensions>] [-p|--permission <permission>] [-s|--size <size>] [-tm|--timeminute <minutes>] [-td|--timeday <days>] [-h|--help]"
 	echo "Description:"
 	echo "  Search for all files with the specified extensions in the given directory and its subdirectories."
 	echo "  File information includes: owner, size, permissions, last modified timestamp, and full path."
 	echo "  Files are grouped by owner and sorted by size."
 	echo "  The report is saved into file_analysis.txt."
 	echo "Options:"
-	echo "  -p, --path       Specify the directory path to search"
-	echo "  -e, --extension  Specify the file extensions to search for"
-	echo "  -h, --help       Display help message"
+	echo "  -d, --directory       Specify the directory path to search"
+	echo "  -e, --extension       Specify the file extensions to search for (space-separated)"
+	echo "  -p, --permission      Specify the permission pattern to match, could be in octal or symbolic format. For example '-p 444', '-p u=x', '-p u=r,g=w"
+	echo "  -s, --size            Specify the size pattern to match"
+	echo "    File uses less than, more than or exactly n units of space, rounding up. The following suffixes can be used:"
+    echo "      'b'    for 512-byte blocks (this is the default if no suffix is used)"
+	echo "      'c'    for bytes"
+	echo "      'w'    for two-byte words"
+	echo "      'k'    for kibibytes (KiB, units of 1024 bytes)"
+	echo "      'M'    for mebibytes (MiB, units of 1024 * 1024 = 1048576 bytes)"
+	echo "      'G'    for gibibytes (GiB, units of 1024 * 1024 * 1024 = 1073741824 bytes)"
+	echo "  -tm, --timeminute     Specify the last modified time in minutes to match"
+	echo "  -td, --timeday        Specify the last modified time in days to match"
+	echo "  -h, --help            Display help message"
 }
 
 validate_directory(){
@@ -129,9 +139,20 @@ if [ -z "$output" ]; then
 	exit 0
 fi
 
+file_count=0
+total_size=0
+biggest_file=""
+smallest_file=""
+
 declare -A owner_size=()
-while read owner size _; do
+while read owner size _ _ _ _ _ name; do
     owner_size[$owner]=$((owner_size[$owner] + size))
+	file_count=$((file_count + 1))
+	total_size=$((total_size + size))
+	if [ -z "$smallest_file" ]; then
+		smallest_file="$name with a size of $size bytes."
+	fi
+	biggest_file="$name with a size of $size bytes."
 done <<< "$output"
 
 sorted_output=$(for owner in "${!owner_size[@]}"; do
@@ -142,6 +163,14 @@ output=$(while read owner _; do
     		grep "^$owner" <<< "$output"
 			echo
 		done <<< "$sorted_output")
-
 echo "$output" > file_analysis.txt
+
+summary=$( echo 
+		   echo "Summary Report:"
+		   echo "Total number of files: $file_count files"
+		   echo "Total files size: $total_size bytes"
+		   echo "Smallest file: $smallest_file"
+		   echo "Largest file: $biggest_file")
+echo "$summary" >> file_analysis.txt
+
 echo "The report has been saved to file_analysis.txt"
